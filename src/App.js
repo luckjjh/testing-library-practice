@@ -1,22 +1,49 @@
 import React from "react";
-import TodoItem from "./Todo";
-import { useAxios } from "./axios.hook";
+import { useAxios, useLocation, useWeather } from "./axios.hook";
+
+// 위치 > 날씨 API 지역 키 > 키로 날씨정보를 받아온다.
+// 지역키 + 날씨정보 객체
 
 function App() {
-  const {loading, todos, error} = useAxios("/todos");
+  const [state,fetchTodos] = useAxios();
+  const [loc,setLoc] = React.useState(null);
+  const [curLoc,setCurLoc] = useLocation();
+  const [weather,setWeather] = useWeather();
+  async function getLocation(){
+      setLoc({
+        latitude:37.59,
+        longitude:127.065,
+      })
+  }
 
-  if (loading) {
+  React.useEffect(()=>{
+    getLocation();
+    fetchTodos();
+  },[])
+
+  React.useEffect(()=>{
+    if(loc)
+      setCurLoc(loc);
+  },[loc]);
+
+  React.useEffect(()=>{
+    if(curLoc.todos.length!==0){
+      setWeather(curLoc.todos.Key);
+    }
+  },[curLoc]);
+
+  if ((state.todos.length===0) || (curLoc.todos.length===0) || (weather.todos.length===0)) {
     return <p>Loading...</p>;
   }
-
-  if (error) {
-    return <p>Error: {error}</p>;
+  if (state.error) {
+    return <p>Error: {state.error}</p>;
   }
-
   return (
     <div className="todo" data-testid="todos">
-      {todos.map((todo) => (
-        <TodoItem key={todo.id} todo={todo} />
+      <div>{weather.todos[0].WeatherText}</div>
+      <div>{curLoc.todos.Key}</div>
+      {state.todos.map((item,idx) => (
+        <div key={idx}>{item.EnglishName}</div>
       ))}
     </div>
   );

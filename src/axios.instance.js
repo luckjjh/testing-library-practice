@@ -1,7 +1,7 @@
 import axios from "axios";
 
 const axiosInstance = axios.create({
-  baseURL: "https://jsonplaceholder.typicode.com",
+  baseURL: `https://apidev.accuweather.com`,
   timeout: 1000,
   headers: { Accept: "application/json", "Content-Type": "application/json" },
 });
